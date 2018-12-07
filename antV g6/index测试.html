@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>训练图</title>
+    <style>::-webkit-scrollbar{display:none;}html,body{overflow:hidden;}</style>
+</head>
+<body>
+<div id="mountNode"></div>
+<script>/*Fixing iframe window.innerHeight 0 issue in Safari*/document.body.clientHeight;</script>
+<script src="g6.min.js"></script>
+<script src="jquery-3.2.1.min.js"></script>
+<script src="g6-plugins.min.js"></script>
+<style>
+.node-conatiner .node-conatiner-status{
+    color: #595959;
+	padding-top: 15px;
+    line-height: 10px;
+    font-size: 16px;
+    text-align: center;
+    height: 30px; 
+	width:120px;
+	border-radius:10px;
+	border:3px solid #00C0A5;
+  }
+.node-conatiner .node-conatiner-success{
+    background: #CECFD4;
+  }
+  .node-conatiner .node-conatiner-fail{
+    background: #FF0030;
+  }
+</style>
+<script type="text/javascript">
+//'tool.minimap' 缩略图
+const plugin = new G6.Plugins['layout.dagre']( {
+  rankdir: 'LR',   //控制方向,竖着显示参数为'TB'
+  // nodesep: 100,
+  // ranksep: 100,
+});
+const minimap = new G6.Plugins['tool.minimap']( {});
+const Util = G6.Util;
+G6.registerNode('customNode', {
+  cssSize: true, // 不使用内部 size 作为节点尺寸
+  getHtml: function(cfg){
+    const model = cfg.model;
+    const container = Util.createDOM('<div class="node-conatiner"></div>');
+	const title = Util.createDOM(`<div class="node-conatiner-status node-conatiner-${model.status}">
+      ${model.label}
+    </div>`);
+    container.appendChild(title);
+	return container;
+    }
+}, 'html');
+const data = {
+  nodes: [{
+    id: 'node1',
+    "label":'科目一',
+	"status":'success'
+ },{
+    id: 'node2',
+   "label":'科目二',
+   "status":'success'
+ },{
+    id: 'node3',
+   "label":'科目是',
+   "status":'success'
+ },{
+    id:'node4',
+	"label":'科目四',
+	"status":'fail'
+ },{
+    id:'node5',
+	"label":'科目五',
+	"status":'success'
+ },{
+    id:'node6',
+	"label":'科目六',
+	"status":'success'
+ },{
+    id:'node7',
+	"label":'科目七',
+	"status":'success'
+ },{
+    id:'node8',
+	"label":'科目八',
+	"status":'success'
+ }],
+  edges: [{
+    target: 'node5',
+    source: 'node1'
+ },{
+    target: 'node5',
+    source: 'node2'
+ },{
+	target:'node5',
+	source:'node4'
+ },{
+    target: 'node4',
+    source: 'node3'
+ },{
+    target: 'node7',
+    source: 'node4'
+ },{
+	target:'node7',
+	source:'node6'
+ },{
+	target:'node7',
+	source:'node1'
+ },{
+	target:'node7',
+	source:'node2'
+ },{
+	target:'node8',
+	source:'node7'
+ }]
+};
+const net = new G6.Net({
+  id: 'mountNode',
+  height: window.innerHeight,
+  fitView: 'cc',      //初始显示的位置在画布的中间
+  // animate: true,   //点击可以复制所点矩形
+   //useAnchor: false,
+  // grid: null,
+  // width: 1200,    // 画布宽
+  // height:800,    // 画布高
+  plugins: [ plugin ],
+  // mode: 'analysis'
+});
+// net.removeBehaviour(['wheelZoom', 'resizeNode']);
+net.source(data.nodes, data.edges);
+net.node()
+   .shape('customNode')
+   .style({
+    stroke: null, // 去除默认边框
+    fillOpacity: 1
+   });
+  
+net.edge()
+    .shape('arrow')
+    .style({
+  lineWidth:1
+}).color('#AAB7C4');
+net.render();
+// net.changeData(data.nodes, data.edges);
+</script>
+</body>
+</html>
